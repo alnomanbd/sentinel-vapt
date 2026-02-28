@@ -1,0 +1,5 @@
+{
+  "name": "SentinelVAPT - Enterprise Security Reporting",
+  "description": "A professional MERN-stack VAPT findings tracker and security reporting system with RBAC, interactive dashboards, and automated risk calculations.",
+  "requestFramePermissions": []
+}
