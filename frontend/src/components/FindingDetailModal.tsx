@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Finding } from '../types';
 import { useAuth } from '../context/AuthContext';
-import { X, Upload, Trash2, Download, FileText, Calendar, Shield, AlertCircle } from 'lucide-react';
+import { X, Upload, Trash2, Download, FileText, Calendar, Shield, AlertCircle, MessageSquare, Send, User } from 'lucide-react';
 import { getSeverityColor, getStatusColor } from '../utils/helpers';
 
 interface Evidence {
@@ -12,6 +12,17 @@ interface Evidence {
   uploadedAt: string;
 }
 
+interface Comment {
+  id: number;
+  findingId: number;
+  userId: number;
+  userName: string;
+  text: string;
+  attachmentPath?: string;
+  attachmentType?: string;
+  createdAt: string;
+}
+
 interface FindingDetailModalProps {
   finding: Finding;
   onClose: () => void;
@@ -19,15 +30,18 @@ interface FindingDetailModalProps {
 
 export const FindingDetailModal: React.FC<FindingDetailModalProps> = ({ finding, onClose }) => {
   const [evidence, setEvidence] = useState<Evidence[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [attachment, setAttachment] = useState<File | null>(null);
   const [loading, setLoading] = useState(true);
   const { token, user } = useAuth();
 
   useEffect(() => {
     fetchEvidence();
+    fetchComments();
   }, [finding.id]);
 
   const fetchEvidence = async () => {
-    setLoading(true);
     try {
       const res = await fetch(`/api/findings/${finding.id}/evidence`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -35,8 +49,43 @@ export const FindingDetailModal: React.FC<FindingDetailModalProps> = ({ finding,
       if (res.ok) setEvidence(await res.json());
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const res = await fetch(`/api/findings/${finding.id}/comments`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) setComments(await res.json());
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim() && !attachment) return;
+
+    const formData = new FormData();
+    formData.append('text', newComment);
+    if (attachment) {
+      formData.append('attachment', attachment);
+    }
+
+    const res = await fetch(`/api/findings/${finding.id}/comments`, {
+      method: 'POST',
+      headers: { 
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+    if (res.ok) {
+      setNewComment('');
+      setAttachment(null);
+      fetchComments();
     }
   };
 
@@ -154,6 +203,99 @@ export const FindingDetailModal: React.FC<FindingDetailModalProps> = ({ finding,
                   ))}
                 </div>
               )}
+            </section>
+
+            <section>
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center">
+                  <MessageSquare size={16} className="mr-2 text-blue-500" /> Discussion
+                </h4>
+              </div>
+              
+              <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2">
+                {comments.length === 0 ? (
+                  <p className="text-slate-400 text-sm italic">No comments yet. Start the discussion!</p>
+                ) : (
+                  comments.map((comment) => (
+                    <div key={comment.id} className={`flex flex-col ${comment.userId === user?.id ? 'items-end' : 'items-start'}`}>
+                      <div className={`max-w-[80%] rounded-2xl p-3 ${comment.userId === user?.id ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-800'}`}>
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className={`text-[10px] font-bold ${comment.userId === user?.id ? 'text-blue-100' : 'text-slate-500'}`}>{comment.userName}</span>
+                          <span className={`text-[10px] ${comment.userId === user?.id ? 'text-blue-200' : 'text-slate-400'}`}>{new Date(comment.createdAt).toLocaleTimeString()}</span>
+                        </div>
+                        <p className="text-sm">{comment.text}</p>
+                        {comment.attachmentPath && (
+                          <div className="mt-2 pt-2 border-t border-white/10">
+                            {comment.attachmentType?.startsWith('image/') ? (
+                              <img 
+                                src={comment.attachmentPath} 
+                                alt="Attachment" 
+                                className="max-w-full rounded-lg border border-white/20 shadow-sm"
+                                referrerPolicy="no-referrer"
+                              />
+                            ) : (
+                              <a 
+                                href={comment.attachmentPath} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className={`flex items-center text-xs font-bold p-2 rounded-lg ${comment.userId === user?.id ? 'bg-blue-700 text-white' : 'bg-white text-blue-600 border border-slate-200'}`}
+                              >
+                                <FileText size={14} className="mr-2" />
+                                Download Attachment
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <form onSubmit={handleAddComment} className="relative">
+                <div className="flex flex-col space-y-2">
+                  {attachment && (
+                    <div className="flex items-center justify-between bg-blue-50 p-2 rounded-lg border border-blue-100">
+                      <div className="flex items-center text-xs text-blue-700 font-medium truncate">
+                        <FileText size={14} className="mr-2" />
+                        {attachment.name}
+                      </div>
+                      <button 
+                        type="button" 
+                        onClick={() => setAttachment(null)}
+                        className="text-blue-400 hover:text-blue-600"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
+                  <div className="relative">
+                    <input 
+                      type="text" 
+                      placeholder="Type your message..." 
+                      className="w-full pl-4 pr-24 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm"
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1">
+                      <label className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
+                        <Upload size={18} />
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          onChange={(e) => e.target.files?.[0] && setAttachment(e.target.files[0])} 
+                        />
+                      </label>
+                      <button 
+                        type="submit"
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        <Send size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
             </section>
           </div>
 

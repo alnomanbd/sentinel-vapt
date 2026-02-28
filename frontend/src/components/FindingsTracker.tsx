@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Finding, Application } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { getSeverityColor, getStatusColor, calculateSeverity } from '../utils/helpers';
-import { Plus, Filter, Download, Search, Edit2, Trash2, Upload, FileText, FileSpreadsheet, Eye } from 'lucide-react';
+import { Plus, Filter, Download, Search, Edit2, Trash2, Upload, FileText, FileSpreadsheet, Eye, AlertTriangle } from 'lucide-react';
 import { FindingDetailModal } from './FindingDetailModal';
 import { OWASP_TOP_10, MITRE_ATTACK_TACTICS } from '../constants';
 import jsPDF from 'jspdf';
@@ -90,6 +90,11 @@ export const FindingsTracker: React.FC = () => {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Findings');
     XLSX.writeFile(workbook, `findings_export_${Date.now()}.xlsx`);
+  };
+
+  const isOverdue = (dueDate: string) => {
+    if (!dueDate) return false;
+    return new Date(dueDate) < new Date() && !['Closed', 'Accepted Risk'].includes(formData.status);
   };
 
   const filteredFindings = findings.filter(f => {
@@ -267,9 +272,16 @@ export const FindingsTracker: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-0.5 rounded-md text-xs font-medium border ${getStatusColor(finding.status)}`}>
-                      {finding.status}
-                    </span>
+                    <div className="flex flex-col space-y-1">
+                      <span className={`px-2 py-0.5 rounded-md text-xs font-medium border ${getStatusColor(finding.status)}`}>
+                        {finding.status}
+                      </span>
+                      {finding.dueDate && new Date(finding.dueDate) < new Date() && finding.status !== 'Closed' && (
+                        <span className="flex items-center text-[10px] font-bold text-red-500 uppercase tracking-tighter">
+                          <AlertTriangle size={10} className="mr-1" /> Overdue
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">

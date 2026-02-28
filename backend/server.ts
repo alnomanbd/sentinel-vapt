@@ -94,14 +94,40 @@ db.exec(`
     uploadedAt TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (findingId) REFERENCES findings(id) ON DELETE CASCADE
   );
+
+  CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    findingId INTEGER NOT NULL,
+    userId INTEGER NOT NULL,
+    text TEXT NOT NULL,
+    attachmentPath TEXT,
+    attachmentType TEXT,
+    createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (findingId) REFERENCES findings(id) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES users(id)
+  );
+
+  CREATE TABLE IF NOT EXISTS notifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    type TEXT NOT NULL, -- 'info', 'warning', 'alert'
+    isRead INTEGER DEFAULT 0,
+    createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userId) REFERENCES users(id)
+  );
 `);
 
 // Migration: Add mitreAttack column if it doesn't exist
 try {
   db.prepare("ALTER TABLE findings ADD COLUMN mitreAttack TEXT").run();
-} catch (e) {
-  // Column already exists or other error
-}
+} catch (e) {}
+
+try {
+  db.prepare("ALTER TABLE comments ADD COLUMN attachmentPath TEXT").run();
+  db.prepare("ALTER TABLE comments ADD COLUMN attachmentType TEXT").run();
+} catch (e) {}
 
 // Seed Admin User if not exists
 const adminExists = db.prepare("SELECT * FROM users WHERE email = ?").get("admin@sentinel.com");
@@ -276,10 +302,23 @@ app.post("/api/findings", authenticateToken, checkRole(['Admin', 'Security Analy
 app.put("/api/findings/:id", authenticateToken, checkRole(['Admin', 'Security Analyst', 'Developer']), (req, res) => {
   const { title, description, impact, cvssScore, severity, owaspCategory, mitreAttack, status, dueDate, remediationSteps } = req.body;
   const riskScore = cvssScore * 10;
+  
+  // Get old status for notification
+  const oldFinding: any = db.prepare("SELECT status, title FROM findings WHERE id = ?").get(req.params.id);
+  
   db.prepare(`
     UPDATE findings SET title = ?, description = ?, impact = ?, cvssScore = ?, severity = ?, owaspCategory = ?, mitreAttack = ?, status = ?, dueDate = ?, remediationSteps = ?, riskScore = ?
     WHERE id = ?
   `).run(title, description, impact, cvssScore, severity, owaspCategory, mitreAttack, status, dueDate, remediationSteps, riskScore, req.params.id);
+  
+  if (oldFinding && oldFinding.status !== status) {
+    const users = db.prepare("SELECT id FROM users WHERE role IN ('Admin', 'Security Analyst')").all();
+    const stmt = db.prepare("INSERT INTO notifications (userId, title, message, type) VALUES (?, ?, ?, ?)");
+    users.forEach((u: any) => {
+      stmt.run(u.id, "Status Updated", `Finding "${oldFinding.title}" status changed to ${status}`, "warning");
+    });
+  }
+  
   res.json({ message: "Finding updated" });
 });
 
@@ -315,6 +354,65 @@ app.delete("/api/evidence/:id", authenticateToken, checkRole(['Admin', 'Security
     db.prepare("DELETE FROM evidence WHERE id = ?").run(req.params.id);
   }
   res.json({ message: "Evidence deleted" });
+});
+
+// --- COMMENTS ROUTES ---
+app.get("/api/findings/:id/comments", authenticateToken, (req, res) => {
+  const comments = db.prepare(`
+    SELECT c.*, u.name as userName 
+    FROM comments c 
+    JOIN users u ON c.userId = u.id 
+    WHERE c.findingId = ? 
+    ORDER BY c.createdAt ASC
+  `).all(req.params.id);
+  res.json(comments);
+});
+
+app.post("/api/findings/:id/comments", authenticateToken, upload.single("attachment"), (req, res) => {
+  const { text } = req.body;
+  const userId = (req as any).user.id;
+  const findingId = req.params.id;
+  
+  let attachmentPath = null;
+  let attachmentType = null;
+  
+  if (req.file) {
+    attachmentPath = `/uploads/${req.file.filename}`;
+    attachmentType = req.file.mimetype;
+  }
+  
+  db.prepare("INSERT INTO comments (findingId, userId, text, attachmentPath, attachmentType) VALUES (?, ?, ?, ?, ?)")
+    .run(findingId, userId, text || "", attachmentPath, attachmentType);
+    
+  // Notify finding owner or relevant analysts (simplified: notify all admins/analysts)
+  const finding: any = db.prepare("SELECT title FROM findings WHERE id = ?").get(findingId);
+  const users = db.prepare("SELECT id FROM users WHERE role IN ('Admin', 'Security Analyst') AND id != ?").all(userId);
+  
+  const stmt = db.prepare("INSERT INTO notifications (userId, title, message, type) VALUES (?, ?, ?, ?)");
+  users.forEach((u: any) => {
+    stmt.run(u.id, "New Comment", `New comment on finding: ${finding.title}`, "info");
+  });
+  
+  res.status(201).json({ message: "Comment added" });
+});
+
+// --- NOTIFICATIONS ROUTES ---
+app.get("/api/notifications", authenticateToken, (req, res) => {
+  const userId = (req as any).user.id;
+  const notifications = db.prepare("SELECT * FROM notifications WHERE userId = ? ORDER BY createdAt DESC LIMIT 50").all(userId);
+  res.json(notifications);
+});
+
+app.put("/api/notifications/:id/read", authenticateToken, (req, res) => {
+  const userId = (req as any).user.id;
+  db.prepare("UPDATE notifications SET isRead = 1 WHERE id = ? AND userId = ?").run(req.params.id, userId);
+  res.json({ message: "Notification marked as read" });
+});
+
+app.delete("/api/notifications", authenticateToken, (req, res) => {
+  const userId = (req as any).user.id;
+  db.prepare("DELETE FROM notifications WHERE userId = ? AND isRead = 1").run(userId);
+  res.json({ message: "Read notifications cleared" });
 });
 
 // --- RISK REGISTER ROUTES ---
