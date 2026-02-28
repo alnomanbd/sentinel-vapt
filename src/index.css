@@ -8,9 +8,11 @@
 
 @layer base {
   body {
-    @apply font-sans text-slate-900 bg-slate-50;
+    @apply font-sans text-slate-900 bg-slate-50 dark:text-slate-100 dark:bg-slate-950 transition-colors duration-300;
   }
 }
+
+@variant dark (&:where(.dark, .dark *));
 
 .animate-in {
   animation: fadeIn 0.5s ease-out;

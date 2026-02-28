@@ -189,29 +189,29 @@ export const FindingsTracker: React.FC = () => {
   };
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-8 space-y-6 transition-colors duration-300">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Findings Tracker</h2>
-          <p className="text-slate-500">Manage and track security vulnerabilities</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Findings Tracker</h2>
+          <p className="text-slate-500 dark:text-slate-400">Manage and track security vulnerabilities</p>
         </div>
         <div className="flex space-x-3">
           <button 
             onClick={exportPDF}
-            className="flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
+            className="flex items-center px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             <Download size={18} className="mr-2" /> Export PDF
           </button>
           <button 
             onClick={exportExcel}
-            className="flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
+            className="flex items-center px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             <FileSpreadsheet size={18} className="mr-2" /> Export Excel
           </button>
           {['Admin', 'Security Analyst'].includes(user?.role || '') && (
             <button 
               onClick={openAdd}
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none"
             >
               <Plus size={18} className="mr-2" /> New Finding
             </button>
@@ -219,14 +219,14 @@ export const FindingsTracker: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-all duration-300">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
           <div className="relative w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
               placeholder="Search findings..." 
-              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-900 dark:text-slate-100 placeholder-slate-400"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -234,7 +234,7 @@ export const FindingsTracker: React.FC = () => {
           <div className="flex items-center space-x-2">
             <Filter size={18} className="text-slate-400" />
             <select 
-              className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               value={severityFilter}
               onChange={e => setSeverityFilter(e.target.value)}
             >
@@ -251,7 +251,7 @@ export const FindingsTracker: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+              <tr className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
                 <th className="px-6 py-4 font-semibold">ID</th>
                 <th className="px-6 py-4 font-semibold">Application</th>
                 <th className="px-6 py-4 font-semibold">Title</th>
@@ -260,12 +260,12 @@ export const FindingsTracker: React.FC = () => {
                 <th className="px-6 py-4 font-semibold">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {filteredFindings.map((finding) => (
-                <tr key={finding.id} className="hover:bg-slate-50 transition-colors group">
-                  <td className="px-6 py-4 text-sm font-mono text-slate-500">{finding.findingId}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-slate-900">{finding.appName}</td>
-                  <td className="px-6 py-4 text-sm text-slate-700 max-w-xs truncate">{finding.title}</td>
+                <tr key={finding.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                  <td className="px-6 py-4 text-sm font-mono text-slate-500 dark:text-slate-400">{finding.findingId}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">{finding.appName}</td>
+                  <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300 max-w-xs truncate">{finding.title}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${getSeverityColor(finding.severity)}`}>
                       {finding.severity}
@@ -285,10 +285,10 @@ export const FindingsTracker: React.FC = () => {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">
-                      <button onClick={() => openDetail(finding)} className="p-1 text-slate-400 hover:text-blue-600" title="View Details"><Eye size={16} /></button>
-                      <button onClick={() => openEdit(finding)} className="p-1 text-slate-400 hover:text-blue-600" title="Edit"><Edit2 size={16} /></button>
+                      <button onClick={() => openDetail(finding)} className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400" title="View Details"><Eye size={16} /></button>
+                      <button onClick={() => openEdit(finding)} className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400" title="Edit"><Edit2 size={16} /></button>
                       {user?.role === 'Admin' && (
-                        <button onClick={() => handleDelete(finding.id)} className="p-1 text-slate-400 hover:text-red-600" title="Delete"><Trash2 size={16} /></button>
+                        <button onClick={() => handleDelete(finding.id)} className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400" title="Delete"><Trash2 size={16} /></button>
                       )}
                     </div>
                   </td>
@@ -301,29 +301,29 @@ export const FindingsTracker: React.FC = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white">
-              <h3 className="text-xl font-bold">{isEditMode ? 'Edit Finding' : 'Add New Finding'}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 dark:border-slate-800 transition-all duration-300">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 bg-white dark:bg-slate-900 z-10">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">{isEditMode ? 'Edit Finding' : 'Add New Finding'}</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Finding ID</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Finding ID</label>
                   <input 
                     type="text" required disabled={isEditMode}
-                    className="w-full p-2 border border-slate-200 rounded-lg bg-slate-50"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 disabled:opacity-50"
                     value={formData.findingId}
                     onChange={e => setFormData({...formData, findingId: e.target.value})}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Application</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Application</label>
                   <select 
                     required disabled={isEditMode}
-                    className="w-full p-2 border border-slate-200 rounded-lg bg-slate-50"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 disabled:opacity-50"
                     value={formData.appId}
                     onChange={e => setFormData({...formData, appId: e.target.value})}
                   >
@@ -333,28 +333,28 @@ export const FindingsTracker: React.FC = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title</label>
                 <input 
                   type="text" required
-                  className="w-full p-2 border border-slate-200 rounded-lg"
+                  className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                   value={formData.title}
                   onChange={e => setFormData({...formData, title: e.target.value})}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">CVSS Score (0-10)</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">CVSS Score (0-10)</label>
                   <input 
                     type="number" step="0.1" min="0" max="10" required
-                    className="w-full p-2 border border-slate-200 rounded-lg"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                     value={formData.cvssScore}
                     onChange={e => setFormData({...formData, cvssScore: parseFloat(e.target.value) || 0})}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
                   <select 
-                    className="w-full p-2 border border-slate-200 rounded-lg"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                     value={formData.status}
                     onChange={e => setFormData({...formData, status: e.target.value})}
                   >
@@ -367,9 +367,9 @@ export const FindingsTracker: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">OWASP Category</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">OWASP Category</label>
                   <select 
-                    className="w-full p-2 border border-slate-200 rounded-lg"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                     value={formData.owaspCategory}
                     onChange={e => setFormData({...formData, owaspCategory: e.target.value})}
                   >
@@ -378,9 +378,9 @@ export const FindingsTracker: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">MITRE ATT&CK Tactic</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">MITRE ATT&CK Tactic</label>
                   <select 
-                    className="w-full p-2 border border-slate-200 rounded-lg"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                     value={formData.mitreAttack}
                     onChange={e => setFormData({...formData, mitreAttack: e.target.value})}
                   >
@@ -391,45 +391,45 @@ export const FindingsTracker: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Due Date</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Due Date</label>
                   <input 
                     type="date"
-                    className="w-full p-2 border border-slate-200 rounded-lg"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                     value={formData.dueDate}
                     onChange={e => setFormData({...formData, dueDate: e.target.value})}
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
                 <textarea 
-                  className="w-full p-2 border border-slate-200 rounded-lg"
+                  className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                   rows={3}
                   value={formData.description}
                   onChange={e => setFormData({...formData, description: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Impact</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Impact</label>
                 <textarea 
-                  className="w-full p-2 border border-slate-200 rounded-lg"
+                  className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                   rows={2}
                   value={formData.impact}
                   onChange={e => setFormData({...formData, impact: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Remediation Steps</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Remediation Steps</label>
                 <textarea 
-                  className="w-full p-2 border border-slate-200 rounded-lg"
+                  className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                   rows={3}
                   value={formData.remediationSteps}
                   onChange={e => setFormData({...formData, remediationSteps: e.target.value})}
                 />
               </div>
               <div className="pt-4 flex justify-end space-x-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
-                <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Changes</button>
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">Cancel</button>
+                <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none">Save Changes</button>
               </div>
             </form>
           </div>

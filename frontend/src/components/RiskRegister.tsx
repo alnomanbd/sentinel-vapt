@@ -125,23 +125,23 @@ export const RiskRegister: React.FC = () => {
     <div className="p-8 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Risk Register</h2>
-          <p className="text-slate-500">Strategic risk assessment and mitigation</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Risk Register</h2>
+          <p className="text-slate-500 dark:text-slate-400">Strategic risk assessment and mitigation</p>
         </div>
         {['Admin', 'Security Analyst'].includes(user?.role || '') && (
           <button 
             onClick={openAdd}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none"
           >
             <Plus size={18} className="mr-2" /> New Risk Entry
           </button>
         )}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-all duration-300">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+            <tr className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
               <th className="px-6 py-4 font-semibold">Risk ID</th>
               <th className="px-6 py-4 font-semibold">Finding</th>
               <th className="px-6 py-4 font-semibold">Impact</th>
@@ -151,27 +151,27 @@ export const RiskRegister: React.FC = () => {
               <th className="px-6 py-4 font-semibold">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {risks.map((risk) => (
-              <tr key={risk.id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4 text-sm font-mono text-slate-500">{risk.riskId}</td>
-                <td className="px-6 py-4 text-sm text-slate-900">{risk.relatedFindingId}</td>
-                <td className="px-6 py-4 text-sm text-slate-600">{risk.businessImpact}</td>
-                <td className="px-6 py-4 text-sm">{risk.likelihood}/5</td>
+              <tr key={risk.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <td className="px-6 py-4 text-sm font-mono text-slate-500 dark:text-slate-400">{risk.riskId}</td>
+                <td className="px-6 py-4 text-sm text-slate-900 dark:text-slate-100">{risk.relatedFindingId}</td>
+                <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{risk.businessImpact}</td>
+                <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{risk.likelihood}/5</td>
                 <td className="px-6 py-4">
                   <span className={`px-2 py-1 rounded-md text-xs font-bold ${
-                    risk.riskRating > 15 ? 'bg-red-100 text-red-700' : 
-                    risk.riskRating > 8 ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'
+                    risk.riskRating > 15 ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' : 
+                    risk.riskRating > 8 ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
                   }`}>
                     {risk.riskLevel} ({risk.riskRating})
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-slate-600">{risk.riskOwner}</td>
+                <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{risk.riskOwner}</td>
                 <td className="px-6 py-4">
                   <div className="flex space-x-2">
-                    <button onClick={() => openEdit(risk)} className="p-1 text-slate-400 hover:text-blue-600"><Edit2 size={16} /></button>
+                    <button onClick={() => openEdit(risk)} className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"><Edit2 size={16} /></button>
                     {user?.role === 'Admin' && (
-                      <button onClick={() => handleDelete(risk.id)} className="p-1 text-slate-400 hover:text-red-600"><Trash2 size={16} /></button>
+                      <button onClick={() => handleDelete(risk.id)} className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"><Trash2 size={16} /></button>
                     )}
                   </div>
                 </td>
@@ -183,49 +183,49 @@ export const RiskRegister: React.FC = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white">
-              <h3 className="text-xl font-bold">{isEditMode ? 'Edit Risk Entry' : 'Add New Risk Entry'}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 dark:border-slate-800 transition-all duration-300">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 bg-white dark:bg-slate-900 z-10">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">{isEditMode ? 'Edit Risk Entry' : 'Add New Risk Entry'}</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Risk ID</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Risk ID</label>
                   <input 
                     type="text" required disabled={isEditMode}
-                    className="w-full p-2 border border-slate-200 rounded-lg bg-slate-50"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 disabled:opacity-50"
                     value={formData.riskId}
                     onChange={e => setFormData({...formData, riskId: e.target.value})}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Related Finding ID</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Related Finding ID</label>
                   <input 
                     type="text"
-                    className="w-full p-2 border border-slate-200 rounded-lg"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     value={formData.relatedFindingId}
                     onChange={e => setFormData({...formData, relatedFindingId: e.target.value})}
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Business Impact</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Business Impact</label>
                 <textarea 
                   required
-                  className="w-full p-2 border border-slate-200 rounded-lg"
+                  className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   value={formData.businessImpact}
                   onChange={e => setFormData({...formData, businessImpact: e.target.value})}
                 />
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Likelihood (1-5)</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Likelihood (1-5)</label>
                   <input 
                     type="number" min="1" max="5" required
-                    className="w-full p-2 border border-slate-200 rounded-lg"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     value={formData.likelihood}
                     onChange={e => {
                       const l = parseInt(e.target.value);
@@ -235,45 +235,45 @@ export const RiskRegister: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Risk Rating</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Risk Rating</label>
                   <input 
                     type="number" disabled
-                    className="w-full p-2 border border-slate-200 rounded-lg bg-slate-50"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                     value={formData.riskRating}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Risk Level</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Risk Level</label>
                   <input 
                     type="text" disabled
-                    className="w-full p-2 border border-slate-200 rounded-lg bg-slate-50"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                     value={formData.riskLevel}
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Risk Owner</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Risk Owner</label>
                   <input 
                     type="text" required
-                    className="w-full p-2 border border-slate-200 rounded-lg"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     value={formData.riskOwner}
                     onChange={e => setFormData({...formData, riskOwner: e.target.value})}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Target Closure Date</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Target Closure Date</label>
                   <input 
                     type="date" required
-                    className="w-full p-2 border border-slate-200 rounded-lg"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     value={formData.targetClosureDate}
                     onChange={e => setFormData({...formData, targetClosureDate: e.target.value})}
                   />
                 </div>
               </div>
               <div className="pt-4 flex justify-end space-x-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
-                <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Changes</button>
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">Cancel</button>
+                <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none">Save Changes</button>
               </div>
             </form>
           </div>

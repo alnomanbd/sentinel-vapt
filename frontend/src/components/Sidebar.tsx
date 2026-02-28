@@ -36,12 +36,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
 
   return (
     <div className={cn(
-      "h-screen bg-[#0f172a] text-slate-300 transition-all duration-300 flex flex-col border-r border-slate-800",
+      "h-screen bg-white dark:bg-[#0f172a] text-slate-600 dark:text-slate-300 transition-all duration-300 flex flex-col border-r border-slate-200 dark:border-slate-800",
       isOpen ? "w-64" : "w-20"
     )}>
       <div className="p-6 flex items-center justify-between">
-        {isOpen && <h1 className="text-xl font-bold text-white tracking-tight">Sentinel<span className="text-blue-500">VAPT</span></h1>}
-        <button onClick={() => setIsOpen(!isOpen)} className="p-1 hover:bg-slate-800 rounded">
+        {isOpen && <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Sentinel<span className="text-blue-500">VAPT</span></h1>}
+        <button onClick={() => setIsOpen(!isOpen)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-500 dark:text-slate-400">
           {isOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
@@ -53,7 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
             onClick={() => setActiveTab(item.id)}
             className={cn(
               "w-full flex items-center p-3 rounded-lg transition-colors",
-              activeTab === item.id ? "bg-blue-600 text-white" : "hover:bg-slate-800"
+              activeTab === item.id ? "bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-none" : "hover:bg-slate-100 dark:hover:bg-slate-800"
             )}
           >
             <item.icon size={20} />
@@ -62,21 +62,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
         ))}
       </nav>
 
-      <div className="p-4 border-t border-slate-800">
+      <div className="p-4 border-t border-slate-100 dark:border-slate-800">
         <div className="flex items-center p-2 mb-4">
-          <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white">
+          <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-white">
             <UserIcon size={20} />
           </div>
           {isOpen && (
             <div className="ml-3 overflow-hidden">
-              <p className="text-sm font-medium text-white truncate">{user?.name}</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{user?.name}</p>
               <p className="text-xs text-slate-500 truncate">{user?.role}</p>
             </div>
           )}
         </div>
         <button 
           onClick={logout}
-          className="w-full flex items-center p-3 rounded-lg hover:bg-red-900/20 hover:text-red-400 transition-colors"
+          className="w-full flex items-center p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
         >
           <LogOut size={20} />
           {isOpen && <span className="ml-4 font-medium">Logout</span>}
